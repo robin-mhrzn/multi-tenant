@@ -1,16 +1,14 @@
-import { Schema, Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export interface TenantDocument extends Document {
-  id: string;
+export type TenantDocument = _Tenant & Document;
+@Schema()
+class _Tenant {
+  @Prop({ required: true })
   name: string;
-  domain: string;
-  isActive: boolean;
+
+  @Prop({ default: Date.now })
   createdAt: Date;
 }
 
-export const TenantSchema = new Schema<TenantDocument>({
-  name: { type: String, unique: true, required: true },
-  domain: { type: String, unique: true, required: true },
-  isActive: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now },
-});
+export const TenantSchema = SchemaFactory.createForClass(_Tenant);

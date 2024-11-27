@@ -1,4 +1,6 @@
-export class TenantModel {
+export class TenantViewModel {
   name: string;
-  domain: string;
+  email: string;
+  password: string;
+  fullName: string;
 }
