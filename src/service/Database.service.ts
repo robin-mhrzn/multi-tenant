@@ -12,11 +12,8 @@ export class DatabaseService {
     const tenantId = this.tenantContextService.getTenant();
     if (!this.connections.has(tenantId)) {
       const connection = await createConnection(
-        `mongodb://localhost:27017/${tenantId}`,
-        {
-          //useNewUrlParser: true,
-          //useUnifiedTopology: true,
-        },
+        process.env.TENANT_DATABASE_URI.toString() + `${tenantId}`,
+        {},
       );
       this.connections.set(tenantId, connection);
     }

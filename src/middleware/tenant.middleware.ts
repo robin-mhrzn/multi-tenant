@@ -7,7 +7,11 @@ export class TenantMiddleware implements NestMiddleware {
   constructor(private readonly tenantContextService: TenantContextService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    const tenantId = req.headers['x-tenant-id'] || ''; // Use a header or fallback to default
+    const host = req.headers.host;
+    const subdomain = host.split('.')[0];
+
+    const tenantId = req.headers['x-tenant-id'] || '';
+
     if (tenantId == '') {
       throw 'Tenant id not valid';
     }

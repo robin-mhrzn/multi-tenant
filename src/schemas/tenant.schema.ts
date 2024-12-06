@@ -4,8 +4,10 @@ import { Document } from 'mongoose';
 export type TenantDocument = _Tenant & Document;
 @Schema()
 class _Tenant {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   name: string;
+  @Prop({ required: true, unique: true })
+  subdomain: string;
 
   @Prop({ default: Date.now })
   createdAt: Date;
