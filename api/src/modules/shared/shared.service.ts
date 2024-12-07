@@ -14,4 +14,13 @@ export class SharedService {
   ): ResponseDTO<T> {
     return new ResponseDTO<T>(success, message, data);
   }
+
+  generateSubdomain(name: string): string {
+    // Normalize the client name to lowercase, remove spaces, and special characters
+    let subdomain = name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-'); // Replace invalid subdomain characters with '-'
+    return subdomain + '.' + process.env.CLIENT_DOMAIN;
+  }
 }

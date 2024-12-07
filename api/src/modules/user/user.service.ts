@@ -25,9 +25,11 @@ export class UserService {
   ) {}
   async register(model: RegisterViewModel): Promise<ResponseDTO> {
     try {
+      const subdomain = this.sharedService.generateSubdomain(model.name);
       const tenant = await new this.tenantModel({
         name: model.name,
         createdAt: this.sharedService.getCurrentDateTime(),
+        subdomain: subdomain,
       }).save();
       this.tenantContextService.setTenant(tenant._id.toString());
       const userModel = await this.databaseService.getTenantModel(
@@ -43,13 +45,14 @@ export class UserService {
       return this.sharedService.getJsonResponse(
         true,
         'Record saved successfully',
+        { domain: subdomain },
       );
     } catch (error) {
       const errorMsg =
         error.code === 11000
           ? 'Name already exists. Please try with a different name.'
           : 'Unexpected error occurred. Please try again.';
-      return this.sharedService.getJsonResponse(false, errorMsg);
+      return this.sharedService.getJsonResponse(false, errorMsg, error);
     }
   }
 
