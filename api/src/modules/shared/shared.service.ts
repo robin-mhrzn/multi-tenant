@@ -16,11 +16,10 @@ export class SharedService {
   }
 
   generateSubdomain(name: string): string {
-    // Normalize the client name to lowercase, remove spaces, and special characters
     let subdomain = name
       .trim()
       .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-'); // Replace invalid subdomain characters with '-'
+      .replace(/[^a-z0-9]/g, '-');
     return subdomain + '.' + process.env.CLIENT_DOMAIN;
   }
 }

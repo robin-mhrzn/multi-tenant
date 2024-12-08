@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Row, Col, Breadcrumb, Dropdown, List, Menu } from "antd";
+import { useEffect } from "react";
+import { Row, Col, Breadcrumb, Dropdown, Menu } from "antd";
 
-import { NavLink, Link, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@app/hooks/reduxHooks";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppSelector } from "@app/hooks/reduxHooks";
 import { isJsonString } from "@app/helpers/common/commonHelper";
 import { useDispatch } from "react-redux";
 import { logout } from "@app/store/slices/profile.slice";
@@ -51,6 +51,8 @@ const Header: React.FC<HeaderProps> = ({ name, subName }) => {
   const handleMenuClick = (e: any) => {
     if (e.key == "Logout") {
       handleLogOut();
+    } else if (e.key == "Profile") {
+      navigate("/profile");
     }
   };
   const handleLogOut = () => {

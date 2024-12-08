@@ -4,7 +4,7 @@ import { isSubDomain } from "@app/helpers/common/commonHelper";
 import { useState } from "react";
 
 const AuthPage = () => {
-  const [subdomain, setSubdomain] = useState<boolean>(isSubDomain());
+  const [subdomain] = useState<boolean>(isSubDomain());
   return <>{subdomain ? <LoginComponent /> : <SignUpComponent />}</>;
 };
 

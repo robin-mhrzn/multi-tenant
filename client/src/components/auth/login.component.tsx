@@ -21,7 +21,7 @@ const LoginComponent: React.FC = () => {
     dispatch(
       userService.login({
         data: formValues,
-        successCallback: (res) => {
+        successCallback: () => {
           navigation("/dashboard");
         },
       })

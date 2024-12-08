@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Layout, Drawer, Affix, Card } from "antd";
+import { Layout, Drawer, Affix } from "antd";
 import Header from "./header";
 import Sidebar from "./sidebar";
 import Footer from "./footer";
@@ -111,9 +111,7 @@ const AdminLayout = () => {
           </AntHeader>
         )}
         <Content className="content-ant">
-          <Card>
-            <Outlet></Outlet>
-          </Card>
+          <Outlet></Outlet>
         </Content>
         <Footer />
       </Layout>

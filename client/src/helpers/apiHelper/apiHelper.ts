@@ -18,6 +18,7 @@ export class APIService {
   private config: Params;
   constructor() {
     this.authToken = getAuthToken();
+    console.log(this.authToken);
     this.config = {
       baseUrl: import.meta.env.VITE_REACT_APP_API_BASE_URL,
       headers: {
@@ -52,13 +53,14 @@ export class APIService {
         };
       })
       .catch((error) => {
+        console.log(error);
         if (error.response.status == 401) {
           showMessage(
             false,
             "You are logged out from system. Please login again"
           );
           //logout();
-          location.href = "/";
+          //location.href = "/";
         } else {
           showMessage(
             false,

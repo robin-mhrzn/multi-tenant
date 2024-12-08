@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GlobalHttpInterceptor } from './interceptors/response.interceptor';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,10 +17,16 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
   app.enableCors({
     origin: (origin, callback) => {
-      const allowedOrigins = [
-        'http://localhost:5173', // Root domain
-        /\.localhost:5173$/, // Subdomains of localhost:5173
-      ];
+      const allowedOrigins =
+        process.env.ALLOWED_ORIGINS?.split(',').map((origin) => {
+          if (origin.includes('*')) {
+            const regexPattern = origin
+              .replace(/\./g, '\\.')
+              .replace(/\*/g, '.*');
+            return new RegExp(`^${regexPattern}$`);
+          }
+          return origin.trim();
+        }) || [];
 
       if (
         !origin || // Allow non-browser requests
@@ -40,10 +47,13 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
   });
 
-  // app.enableCors({
-  //   origin: 'http://dev.localhost:5173', // Allow requests from this origin
-  //   credentials: true, // If you're using cookies or other credentials
-  // });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Remove properties that are not in the DTO
+      forbidNonWhitelisted: true, // Throw an error if non-DTO properties are present
+      transform: true, // Automatically transform payloads to DTO instances
+    }),
+  );
   app.useGlobalInterceptors(new GlobalHttpInterceptor());
   await app.listen(3000);
 }

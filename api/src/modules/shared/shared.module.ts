@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { SharedService } from './shared.service';
-import { AuthService } from './auth.service';
+import { AuthHelper } from './auth.helper';
 import { JwtService } from '@nestjs/jwt';
 import { TenantContextService } from 'src/helpers/tenant-context.service';
 import { DatabaseService } from 'src/service/Database.service';
@@ -10,10 +10,10 @@ import { DatabaseService } from 'src/service/Database.service';
   providers: [
     DatabaseService,
     SharedService,
-    AuthService,
+    AuthHelper,
     JwtService,
     TenantContextService,
   ],
-  exports: [DatabaseService, SharedService, AuthService, TenantContextService],
+  exports: [DatabaseService, SharedService, AuthHelper, TenantContextService],
 })
 export class SharedModule {}

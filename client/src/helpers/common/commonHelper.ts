@@ -73,6 +73,8 @@ export const getBreadcrumbName = (pathname: string) => {
   let breadcrumbName = "";
   if (pathname == "/dashboard") {
     breadcrumbName = "Dashboard";
+  } else if (pathname == "/profile") {
+    breadcrumbName = "Profile";
   }
   return breadcrumbName;
 };

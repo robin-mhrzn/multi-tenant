@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { TenantContextService } from 'src/helpers/tenant-context.service';
-import { LoginViewModel, RegisterViewModel } from 'src/models/user.model';
-import { AuthService } from 'src/modules/shared/auth.service';
+import {
+  ChangePasswordModel,
+  LoginViewModel,
+  ProfileModel,
+  RegisterViewModel,
+} from 'src/models/user.model';
+import { AuthHelper } from 'src/modules/shared/auth.helper';
 import { ResponseDTO } from 'src/modules/shared/shared.dto';
 import { SharedService } from 'src/modules/shared/shared.service';
 import { TenantDocument } from 'src/schemas/tenant.schema';
@@ -21,70 +26,51 @@ export class UserService {
     private readonly sharedService: SharedService,
     private readonly databaseService: DatabaseService,
     private readonly tenantContextService: TenantContextService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthHelper,
   ) {}
-  async register(model: RegisterViewModel): Promise<ResponseDTO> {
-    try {
-      const subdomain = this.sharedService.generateSubdomain(model.name);
-      const tenant = await new this.tenantModel({
-        name: model.name,
-        createdAt: this.sharedService.getCurrentDateTime(),
-        subdomain: subdomain,
-      }).save();
-      this.tenantContextService.setTenant(tenant._id.toString());
-      const userModel = await this.databaseService.getTenantModel(
-        USER_MODEL_NAME,
-        UserSchema,
-      );
-      await userModel.create({
-        name: model.fullName,
-        email: model.email,
-        password: await this.authService.hashPassword(model.password),
-        createdAt: tenant.createdAt,
-      });
-      return this.sharedService.getJsonResponse(
-        true,
-        'Record saved successfully',
-        { domain: subdomain },
-      );
-    } catch (error) {
-      const errorMsg =
-        error.code === 11000
-          ? 'Name already exists. Please try with a different name.'
-          : 'Unexpected error occurred. Please try again.';
-      return this.sharedService.getJsonResponse(false, errorMsg, error);
-    }
-  }
 
-  async login(model: LoginViewModel): Promise<ResponseDTO> {
+  private async getUserModel() {
     const UserModel = await this.databaseService.getTenantModel<UserDocument>(
       USER_MODEL_NAME,
       UserSchema,
     );
-    const userEntity = await UserModel.findOne({ email: model.email }).exec();
-    let errorMsg = '';
-    if (userEntity == null) {
-      errorMsg = 'Email address not valid. Please try again!';
+    return UserModel;
+  }
+  async saveProfile(id: string, model: ProfileModel): Promise<ResponseDTO> {
+    let userModel = await this.getUserModel();
+    await userModel
+      .findByIdAndUpdate(id, {
+        name: model.name,
+      })
+      .exec();
+    return this.sharedService.getJsonResponse(
+      true,
+      'Record saved successfully',
+    );
+  }
+  async changePassword(
+    id: string,
+    model: ChangePasswordModel,
+  ): Promise<ResponseDTO> {
+    let userModel = await this.getUserModel();
+    const userEntity = await userModel.findById(id).exec();
+    if (
+      await this.authService.comparePasswords(
+        model.oldPassword,
+        userEntity.password,
+      )
+    ) {
+      userEntity.password = await this.authService.hashPassword(model.password);
+      userEntity.save();
+      return this.sharedService.getJsonResponse(
+        true,
+        'Password changed succesfully',
+      );
     } else {
-      if (
-        this.authService.comparePasswords(model.password, userEntity.password)
-      ) {
-        return this.sharedService.getJsonResponse(
-          true,
-          'User logged in successfully',
-          {
-            name: userEntity.name,
-            email: userEntity.email,
-            token: await this.authService.generateJwt({
-              sub: userEntity._id,
-              email: userEntity.email,
-            }),
-          },
-        );
-      } else {
-        errorMsg = 'Invalid email or password';
-      }
+      return this.sharedService.getJsonResponse(
+        false,
+        'Old password doesnot match. Please check again',
+      );
     }
-    return this.sharedService.getJsonResponse(false, errorMsg);
   }
 }
