@@ -1,3 +1,4 @@
+import { getCurrentYear } from "@app/helpers/common/commonHelper";
 import { Layout } from "antd";
 
 const { Header, Footer, Content } = Layout;
@@ -18,7 +19,7 @@ const AuthLayout: React.FC = () => {
           </div>
         </Content>
         <Footer>
-          <p className="copyright">Copyright © 2024</p>
+          <p className="copyright">Copyright © {getCurrentYear()}</p>
         </Footer>
       </div>
     </>

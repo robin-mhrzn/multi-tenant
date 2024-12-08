@@ -44,7 +44,6 @@ export class UserService {
         .then((res?: any) => {
           if (res?.status === 200 && res.data.success == true) {
             showMessage(res.data.success, res.data.message);
-            debugger;
             dispatch(storeUserData(res?.data?.data));
             dispatch(storeAuthToken(res?.data?.data?.access_token));
             this.apiService.updateAuthToken(res?.data?.data?.access_token);

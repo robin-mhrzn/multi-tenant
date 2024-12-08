@@ -46,8 +46,6 @@ export class APIService {
       data,
     })
       .then((response) => {
-        debugger;
-        console.log(response);
         return {
           status: response?.status,
           data: response?.data,

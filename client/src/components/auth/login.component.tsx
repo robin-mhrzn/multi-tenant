@@ -1,7 +1,7 @@
 import { UserService } from "@app/services/user.service";
 import { Button, Card, Form, Input } from "antd";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hooks/reduxHooks";
 
 interface LoginFormValues {
@@ -16,12 +16,14 @@ const LoginComponent: React.FC = () => {
   const [formLayout] = useState<LayoutType>("horizontal");
   const dispatch = useAppDispatch();
   const userService = new UserService();
-
+  const navigation = useNavigate();
   const onFinish = (formValues: LoginFormValues) => {
     dispatch(
       userService.login({
         data: formValues,
-        successCallback: (res) => {},
+        successCallback: (res) => {
+          navigation("/dashboard");
+        },
       })
     );
   };

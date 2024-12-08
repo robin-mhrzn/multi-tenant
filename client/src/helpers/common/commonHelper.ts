@@ -68,3 +68,11 @@ export const getCurrentYear = () => {
   const currentYear = new Date().getFullYear();
   return currentYear;
 };
+
+export const getBreadcrumbName = (pathname: string) => {
+  let breadcrumbName = "";
+  if (pathname == "/dashboard") {
+    breadcrumbName = "Dashboard";
+  }
+  return breadcrumbName;
+};
