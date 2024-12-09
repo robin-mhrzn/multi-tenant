@@ -9,10 +9,10 @@ export class UserService {
   }
   register = ({
     data,
-    successCallback,
+    callback,
   }: {
     data: any;
-    successCallback: (res: any) => void;
+    callback: (res: any) => void;
   }) => {
     this.apiService
       .callApi({
@@ -21,19 +21,13 @@ export class UserService {
         data: data,
       })
       .then((res?: any) => {
-        showMessage(res.data.success, res.data.message);
         if (res?.status === 200 && res.data.success == true) {
-          successCallback(res.data);
+          showMessage(res.data.success, res.data.message);
         }
+        callback(res.data);
       });
   };
-  login = ({
-    data,
-    successCallback,
-  }: {
-    data: any;
-    successCallback: (res: any) => void;
-  }) => {
+  login = ({ data, callback }: { data: any; callback: (res: any) => void }) => {
     return (dispatch?: any) => {
       this.apiService
         .callApi({
@@ -47,20 +41,76 @@ export class UserService {
             dispatch(storeUserData(res?.data?.data));
             dispatch(storeAuthToken(res?.data?.data?.access_token));
             this.apiService.updateAuthToken(res?.data?.data?.access_token);
-            successCallback(res.data);
-          } else if (res?.data?.success == false) {
-            showMessage(false, res.data.message);
           }
+          callback(res.data);
         });
     };
+  };
+  generateResetCode = ({
+    data,
+    callback,
+  }: {
+    data: any;
+    callback: (res: any) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "auth/generateResetCode",
+        method: "post",
+        data: data,
+      })
+      .then((res?: any) => {
+        if (res?.status === 200 && res.data.success == true) {
+          showMessage(true, res.data.message);
+        }
+        callback(res.data);
+      });
+  };
+  validateResetCode = ({
+    data,
+    callback,
+  }: {
+    data: any;
+    callback: (res: any) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "auth/validateResetCode",
+        method: "post",
+        data: data,
+      })
+      .then((res?: any) => {
+        callback(res.data);
+      });
+  };
+
+  resetPassword = ({
+    data,
+    callback,
+  }: {
+    data: any;
+    callback: (res: any) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "auth/resetPassword",
+        method: "post",
+        data: data,
+      })
+      .then((res?: any) => {
+        if (res?.status === 200 && res.data.success == true) {
+          showMessage(true, res.data.message);
+        }
+        callback(res.data);
+      });
   };
 
   changePassword = ({
     data,
-    successCallback,
+    callback,
   }: {
     data: any;
-    successCallback: (res: any) => void;
+    callback: (res: any) => void;
   }) => {
     this.apiService
       .callApi({
@@ -71,19 +121,17 @@ export class UserService {
       .then((res?: any) => {
         if (res?.status === 200 && res.data.success == true) {
           showMessage(res.data.success, res.data.message);
-          successCallback(res.data);
-        } else if (res?.data.success == false) {
-          showMessage(res.data.success, res.data.message);
         }
+        callback(res.data);
       });
   };
 
   saveProfile = ({
     data,
-    successCallback,
+    callback,
   }: {
     data: any;
-    successCallback: (res: any) => void;
+    callback: (res: any) => void;
   }) => {
     this.apiService
       .callApi({
@@ -94,10 +142,8 @@ export class UserService {
       .then((res?: any) => {
         if (res?.status === 200 && res.data.success == true) {
           showMessage(res.data.success, res.data.message);
-          successCallback(res.data);
-        } else if (res?.data.success == false) {
-          showMessage(res.data.success, res.data.message);
         }
+        callback(res.data);
       });
   };
 }

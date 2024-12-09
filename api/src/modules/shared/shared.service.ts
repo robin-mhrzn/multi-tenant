@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ResponseDTO } from './shared.dto';
-
+import * as crypto from 'crypto';
 @Injectable()
 export class SharedService {
   getCurrentDateTime(): Date {
@@ -21,5 +21,10 @@ export class SharedService {
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '-');
     return subdomain + '.' + process.env.CLIENT_DOMAIN;
+  }
+
+  generateRandomCode(): string {
+    const length = 6;
+    return crypto.randomBytes(length).toString('hex').slice(0, length);
   }
 }

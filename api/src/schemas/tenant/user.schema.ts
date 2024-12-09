@@ -17,6 +17,9 @@ class _User {
 
   @Prop({ default: Date.now })
   createdAt: Date;
+
+  @Prop()
+  resetCode: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(_User);

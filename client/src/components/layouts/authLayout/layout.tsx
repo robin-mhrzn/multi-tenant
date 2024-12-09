@@ -1,10 +1,21 @@
-import { getCurrentYear } from "@app/helpers/common/commonHelper";
+import { getCurrentYear, isJsonString } from "@app/helpers/common/commonHelper";
+import { useAppSelector } from "@app/hooks/reduxHooks";
 import { Layout } from "antd";
 
 const { Header, Footer, Content } = Layout;
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 const AuthLayout: React.FC = () => {
+  const navigate = useNavigate();
+  let userData = useAppSelector((state) => state.profile.userData);
+  if (isJsonString(userData)) {
+    userData = JSON.parse(userData);
+  }
+  useEffect(() => {
+    if (userData && userData.name) {
+      navigate("/dashboard");
+    }
+  }, [userData, navigate]);
   return (
     <>
       <div className="layout-default ant-layout layout-sign-up">

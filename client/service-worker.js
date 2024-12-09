@@ -1,5 +1,4 @@
 self.addEventListener("install", (event) => {
-  console.log("Service Worker installing.");
   event.waitUntil(
     caches.open("app-cache").then((cache) => {
       return cache.addAll(["/", "/index.html"]);

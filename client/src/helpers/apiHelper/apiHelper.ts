@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getAuthToken, showMessage } from "../common/commonHelper";
+import { logout } from "@app/store/slices/profile.slice";
 
 interface Params {
   baseUrl: any;
@@ -18,7 +19,6 @@ export class APIService {
   private config: Params;
   constructor() {
     this.authToken = getAuthToken();
-    console.log(this.authToken);
     this.config = {
       baseUrl: import.meta.env.VITE_REACT_APP_API_BASE_URL,
       headers: {
@@ -39,7 +39,6 @@ export class APIService {
     };
   };
   callApi = async ({ url, data, method }: ServiceTS): Promise<any> => {
-    console.log(`${this.config.baseUrl}/${url}`, method);
     return await axios({
       ...this.config,
       method: method ?? "get",
@@ -47,20 +46,22 @@ export class APIService {
       data,
     })
       .then((response) => {
+        if (response?.data?.success == false) {
+          showMessage(false, response.data.message);
+        }
         return {
           status: response?.status,
           data: response?.data,
         };
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response.status == 401) {
+        if (error?.response?.status == 401) {
           showMessage(
             false,
             "You are logged out from system. Please login again"
           );
-          //logout();
-          //location.href = "/";
+          logout();
+          location.href = "/";
         } else {
           showMessage(
             false,

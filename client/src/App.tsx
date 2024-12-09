@@ -10,7 +10,6 @@ function App() {
   const host = window.location.host;
   const subdomain = host.split(".")[0];
   const isSubdomain = host !== subdomain;
-  console.log(isSubdomain);
   return (
     <BrowserRouter>
       <Routes>
