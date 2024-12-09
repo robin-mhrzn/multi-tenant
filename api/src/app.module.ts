@@ -11,6 +11,7 @@ import { UserModule } from './modules/user/user.module';
 import { TenantMiddleware } from './middleware/tenant.middleware';
 import { TenantSchema } from './schemas/tenant.schema';
 import { AuthModule } from './modules/auth/auth.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     MongooseModule.forRoot(process.env.MAIN_DATABASE_URI),
     MongooseModule.forFeature([{ name: 'Tenant', schema: TenantSchema }]),
+    MailModule,
     SharedModule,
     AuthModule,
     UserModule,

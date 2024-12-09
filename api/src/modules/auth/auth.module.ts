@@ -8,6 +8,7 @@ import { DatabaseService } from 'src/service/Database.service';
 import { AuthHelper } from '../shared/auth.helper';
 import { TenantSchema } from 'src/schemas/tenant.schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [

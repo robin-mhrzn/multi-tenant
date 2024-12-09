@@ -17,6 +17,7 @@ import {
   UserSchema,
 } from 'src/schemas/tenant/user.schema';
 import { AuthHelper } from '../shared/auth.helper';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly databaseService: DatabaseService,
     private readonly tenantContextService: TenantContextService,
     private readonly authHelper: AuthHelper,
+    private readonly mailService: MailService,
   ) {}
 
   async register(model: RegisterViewModel): Promise<ResponseDTO> {
@@ -108,6 +110,7 @@ export class AuthService {
       const resetCode = this.sharedService.generateRandomCode();
       userEntity.resetCode = resetCode;
       userEntity.save();
+      this.mailService.sendOtpEmail(email, resetCode);
       return this.sharedService.getJsonResponse(
         true,
         'Please check for OTP send to your email',
