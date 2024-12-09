@@ -2,6 +2,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Global, Module } from '@nestjs/common';
 import { MailService } from './mail.service';
+import { join } from 'path';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+
 @Global()
 @Module({
   imports: [
@@ -26,7 +29,11 @@ import { MailService } from './mail.service';
           ),
         },
         template: {
-          dir: __dirname + '/templates',
+          dir: join(__dirname, 'templates'),
+          adapter: new HandlebarsAdapter(), // Use Handlebars as the template engine
+          options: {
+            strict: true,
+          },
         },
       }),
     }),
